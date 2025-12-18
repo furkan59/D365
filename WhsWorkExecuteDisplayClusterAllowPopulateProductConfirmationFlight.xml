@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WhsWorkExecuteDisplayClusterAllowPopulateProductConfirmationFlight</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// This flight allows <c>WHSWorkExecuteDisplayCluster</c> to populate the product confirmation fields, with the value stored in the pass,
+/// on cluster picking, but not on cluster putaway.
+/// </summary>
+internal final class WhsWorkExecuteDisplayClusterAllowPopulateProductConfirmationFlight extends Flight
+{
+    static private WhsWorkExecuteDisplayClusterAllowPopulateProductConfirmationFlight singleton = new WhsWorkExecuteDisplayClusterAllowPopulateProductConfirmationFlight();
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>isEnabledByDefault</Name>
+				<Source><![CDATA[
+    [Hookable(false)]
+    protected boolean isEnabledByDefault()
+    {
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>instance</Name>
+				<Source><![CDATA[
+    [Hookable(false)]
+    public static WhsWorkExecuteDisplayClusterAllowPopulateProductConfirmationFlight instance()
+    {
+        return singleton;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

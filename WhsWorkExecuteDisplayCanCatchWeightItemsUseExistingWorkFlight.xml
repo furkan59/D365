@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WhsWorkExecuteDisplayCanCatchWeightItemsUseExistingWorkFlight</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// When <c>WhsWorkExecuteDisplayCanCatchWeightItemsUseExistingWorkFlight</c> is enabled,
+/// ensure that for mobile device menu items with "Use existing work" enabled, the actual inventory weight from the inventory transactions is used instead of the average.
+/// </summary>
+internal final class WhsWorkExecuteDisplayCanCatchWeightItemsUseExistingWorkFlight extends Flight
+{
+    static private WhsWorkExecuteDisplayCanCatchWeightItemsUseExistingWorkFlight singleton = new WhsWorkExecuteDisplayCanCatchWeightItemsUseExistingWorkFlight();
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>isEnabledByDefault</Name>
+				<Source><![CDATA[
+    [Hookable(false)]
+    protected boolean isEnabledByDefault()
+    {
+        return false;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>instance</Name>
+				<Source><![CDATA[
+    internal static WhsWorkExecuteDisplayCanCatchWeightItemsUseExistingWorkFlight instance()
+    {
+        return singleton;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

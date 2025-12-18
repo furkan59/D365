@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WhsWorkExecuteDisplayProcessorOptimizedIsDetourButtonClickedFlight</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// When <c>WhsWorkExecuteDisplayProcessorOptimizedIsDetourButtonClickedFlight</c> is enabled, the system will try to determine if a detour button has been pressed (computationally cheaper) before invoking the SQL server to check if the session can support entering the detour (more expensive).
+/// </summary>
+internal final class WhsWorkExecuteDisplayProcessorOptimizedIsDetourButtonClickedFlight extends Flight
+{
+    static private WhsWorkExecuteDisplayProcessorOptimizedIsDetourButtonClickedFlight singleton = new WhsWorkExecuteDisplayProcessorOptimizedIsDetourButtonClickedFlight();
+ 
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>isEnabledByDefault</Name>
+				<Source><![CDATA[
+    [Hookable(false)]
+    protected boolean isEnabledByDefault()
+    {
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>instance</Name>
+				<Source><![CDATA[
+    [Hookable(false)]
+    internal static WhsWorkExecuteDisplayProcessorOptimizedIsDetourButtonClickedFlight instance()
+    {
+        return singleton;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

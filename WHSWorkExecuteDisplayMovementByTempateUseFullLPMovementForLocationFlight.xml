@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WHSWorkExecuteDisplayMovementByTempateUseFullLPMovementForLocationFlight</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// When <c>WHSWorkExecuteDisplayMovementByTempateUseFullLPMovementForLocationFlight</c> is enabled, automatic move LP policy will create work only when LP is entered and is not empty. 
+/// If a location is entered, the user will need to enter all required fields to proceed. 
+/// </summary>
+internal final class WHSWorkExecuteDisplayMovementByTempateUseFullLPMovementForLocationFlight extends Flight
+{
+    private static WHSWorkExecuteDisplayMovementByTempateUseFullLPMovementForLocationFlight singleton = new WHSWorkExecuteDisplayMovementByTempateUseFullLPMovementForLocationFlight();
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>isEnabledByDefault</Name>
+				<Source><![CDATA[
+    [Wrappable(false)]
+    protected boolean isEnabledByDefault()
+    {
+        return true;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>instance</Name>
+				<Source><![CDATA[
+    [Hookable(false)]
+    public static WHSWorkExecuteDisplayMovementByTempateUseFullLPMovementForLocationFlight instance()
+    {
+        return singleton;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

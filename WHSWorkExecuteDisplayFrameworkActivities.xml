@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WHSWorkExecuteDisplayFrameworkActivities</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+internal final class WHSWorkExecuteDisplayFrameworkActivities
+{
+    private const str ActivityNamePrefix = 'WHSWorkExecuteDisplayFramework.';
+
+    private WHSInstrumentationLogger logger;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>new</Name>
+				<Source><![CDATA[
+    private void new(WHSInstrumentationLogger _logger)
+    {
+        logger = _logger;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>newFromLogger</Name>
+				<Source><![CDATA[
+    internal static WHSWorkExecuteDisplayFrameworkActivities newFromLogger(WHSInstrumentationLogger _logger)
+    {
+        return new WHSWorkExecuteDisplayFrameworkActivities(_logger);
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>processorStateBuildDisplayForm</Name>
+				<Source><![CDATA[
+    internal SysInstrumentationActivityContext processorStateBuildDisplayForm()
+    {
+        return logger.activityContext(logger.activity(ActivityNamePrefix + 'processorState.buildDisplayForm'));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>mobileAppServiceXMLTranslatorReadXml</Name>
+				<Source><![CDATA[
+    internal SysInstrumentationActivityContext mobileAppServiceXMLTranslatorReadXml()
+    {
+        return logger.activityContext(logger.activity(ActivityNamePrefix + 'mobileAppServiceXMLTranslator.readXML'));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>mobileAppServiceXMLTranslatorCreateXml</Name>
+				<Source><![CDATA[
+    internal SysInstrumentationActivityContext mobileAppServiceXMLTranslatorCreateXml()
+    {
+        return logger.activityContext(logger.activity(ActivityNamePrefix + 'mobileAppServiceXMLTranslator.createXML'));
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>mobileAppServiceXMLTranslatorCreateXmlParentNode</Name>
+				<Source><![CDATA[
+    internal SysInstrumentationActivityContext mobileAppServiceXMLTranslatorCreateXmlParentNode()
+    {
+        return logger.activityContext(logger.activity(ActivityNamePrefix + 'mobileAppServiceXMLTranslator.createXMLParentNode'));
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
