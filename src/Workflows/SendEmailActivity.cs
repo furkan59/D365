@@ -50,6 +50,17 @@ namespace D365.Workflows
                 email["subject"] = subject;
                 email["description"] = body;
 
+                // Set From party (system user)
+                Entity fromParty = new Entity("activityparty");
+                fromParty["partyid"] = new EntityReference("systemuser", context.UserId);
+                email["from"] = new Entity[] { fromParty };
+
+                // Set To party (would typically come from input parameter or context)
+                // For this example, we're using a placeholder - in production, get from input
+                Entity toParty = new Entity("activityparty");
+                toParty["addressused"] = toEmail;
+                email["to"] = new Entity[] { toParty };
+
                 // Set the regarding object
                 if (context.PrimaryEntityName != null && context.PrimaryEntityId != Guid.Empty)
                 {

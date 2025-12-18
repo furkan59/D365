@@ -224,9 +224,4 @@ D365.FormScripts = D365.FormScripts || {};
         Xrm.Navigation.openErrorDialog({ message: errorMessage });
     }
 
-    // Expose public functions
-    this.onLoad = this.onLoad;
-    this.onSave = this.onSave;
-    this.onChange = this.onChange;
-
 }).call(D365.FormScripts);

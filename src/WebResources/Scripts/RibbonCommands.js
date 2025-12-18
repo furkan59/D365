@@ -186,9 +186,4 @@ D365.RibbonCommands = D365.RibbonCommands || {};
         });
     }
 
-    // Expose public functions
-    this.enableRule = this.enableRule;
-    this.customAction = this.customAction;
-    this.exportToExcel = this.exportToExcel;
-
 }).call(D365.RibbonCommands);
