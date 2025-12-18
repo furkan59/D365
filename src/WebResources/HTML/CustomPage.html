@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D365 Custom Page</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>D365 Custom Web Resource</h1>
+            <p class="subtitle">Custom HTML page for Dynamics 365</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Data Entry Form</h2>
+                <form id="customForm">
+                    <div class="form-group">
+                        <label for="accountName">Account Name:</label>
+                        <input type="text" id="accountName" name="accountName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="category" name="category">
+                            <option value="">-- Select Category --</option>
+                            <option value="customer">Customer</option>
+                            <option value="partner">Partner</option>
+                            <option value="vendor">Vendor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="4"></textarea>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="data-section">
+                <h2>Results</h2>
+                <div id="resultsContainer">
+                    <p class="placeholder">Submit the form to see results here</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 D365 Custom Solutions</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Custom page loaded');
+            initializePage();
+        });
+
+        // Initialize page functionality
+        function initializePage() {
+            // Set up form submission handler
+            document.getElementById('customForm').addEventListener('submit', handleFormSubmit);
+
+            // Check if running in D365 context
+            if (typeof Xrm !== 'undefined') {
+                console.log('Running in D365 context');
+                loadD365Data();
+            } else {
+                console.log('Running standalone');
+            }
+        }
+
+        // Handle form submission
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            var formData = {
+                accountName: document.getElementById('accountName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value
+            };
+
+            console.log('Form submitted:', formData);
+
+            // Display results
+            displayResults(formData);
+
+            // If in D365 context, create record
+            if (typeof Xrm !== 'undefined') {
+                createD365Record(formData);
+            }
+        }
+
+        // Display form results
+        function displayResults(data) {
+            var resultsHtml = '<div class="results">';
+            resultsHtml += '<h3>Submitted Data</h3>';
+            resultsHtml += '<ul>';
+            resultsHtml += '<li><strong>Account Name:</strong> ' + data.accountName + '</li>';
+            resultsHtml += '<li><strong>Email:</strong> ' + data.email + '</li>';
+            resultsHtml += '<li><strong>Phone:</strong> ' + (data.phone || 'N/A') + '</li>';
+            resultsHtml += '<li><strong>Category:</strong> ' + (data.category || 'N/A') + '</li>';
+            resultsHtml += '<li><strong>Description:</strong> ' + (data.description || 'N/A') + '</li>';
+            resultsHtml += '</ul>';
+            resultsHtml += '</div>';
+
+            document.getElementById('resultsContainer').innerHTML = resultsHtml;
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('customForm').reset();
+            document.getElementById('resultsContainer').innerHTML = 
+                '<p class="placeholder">Submit the form to see results here</p>';
+        }
+
+        // Load data from D365
+        function loadD365Data() {
+            try {
+                var context = Xrm.Utility.getGlobalContext();
+                var userId = context.getUserId();
+                var userName = context.getUserName();
+
+                console.log('Current user:', userName);
+
+                // Optionally pre-fill form with D365 data
+                // Xrm.WebApi.retrieveMultipleRecords(...);
+            } catch (error) {
+                console.error('Error loading D365 data:', error);
+            }
+        }
+
+        // Create record in D365
+        function createD365Record(data) {
+            try {
+                var entity = {
+                    "name": data.accountName,
+                    "emailaddress1": data.email,
+                    "telephone1": data.phone,
+                    "description": data.description
+                };
+
+                Xrm.WebApi.createRecord("account", entity).then(
+                    function success(result) {
+                        console.log("Account created with ID: " + result.id);
+                        
+                        // Show success message
+                        var alertStrings = { 
+                            confirmButtonLabel: "OK", 
+                            text: "Account created successfully!",
+                            title: "Success" 
+                        };
+                        var alertOptions = { height: 120, width: 260 };
+                        Xrm.Navigation.openAlertDialog(alertStrings, alertOptions);
+                    },
+                    function (error) {
+                        console.error("Error creating account:", error.message);
+                        
+                        // Show error message
+                        var alertStrings = { 
+                            confirmButtonLabel: "OK", 
+                            text: "Error creating account: " + error.message,
+                            title: "Error" 
+                        };
+                        Xrm.Navigation.openErrorDialog(alertStrings);
+                    }
+                );
+            } catch (error) {
+                console.error('Error creating D365 record:', error);
+            }
+        }
+    </script>
+</body>
+</html>
