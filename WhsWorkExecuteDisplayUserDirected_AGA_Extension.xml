@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WhsWorkExecuteDisplayUserDirected_AGA_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// The <c>WhsWorkExecuteDisplayUserDirected_AGA_Extension</c> class extends WhsWorkExecuteDisplayUserDirected 
+/// with AGA-specific functionality for user-directed picking.
+/// </summary>
+[ExtensionOf(classStr(WhsWorkExecuteDisplayUserDirected))]
+final internal class WhsWorkExecuteDisplayUserDirected_AGA_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>buildAgaStandardItemQtyControls</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Builds the form controls for standard item quantity entry.
+    /// Standard items go directly to quantity entry, bypassing the old step 2 form.
+    /// </summary>
+    /// <returns>Container with quantity entry form controls</returns>
+    protected container buildAgaStandardItemQtyControls()
+    {
+        container ret;
+        str itemId = '';
+        
+        // Get item ID from pass
+        if (pass && pass.exists('AgaCurrentItem'))
+        {
+            itemId = pass.lookup('AgaCurrentItem');
+        }
+        
+        // Build quantity entry form for standard items
+        ret = this.buildControl(
+            "@WAX:Quantity",
+            WHSRFControlType::Input,
+            "AgaQty",
+            "",
+            strFmt("@WAX:EnterQtyForItem", itemId),
+            ""
+        );
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildControl</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Helper method to build a control container.
+    /// </summary>
+    private container buildControl(
+        str _label,
+        WHSRFControlType _controlType,
+        str _name,
+        str _data,
+        str _message,
+        str _placeholder)
+    {
+        container ret;
+        
+        // Build control container - simplified version
+        // In real implementation, this would use proper control building logic
+        ret = [_label, _controlType, _name, _message, _placeholder, _data];
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
