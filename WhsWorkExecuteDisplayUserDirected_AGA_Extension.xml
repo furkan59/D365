@@ -19,6 +19,7 @@ final internal class WhsWorkExecuteDisplayUserDirected_AGA_Extension
     /// <summary>
     /// Builds the form controls for standard item quantity entry.
     /// Standard items go directly to quantity entry, bypassing the old step 2 form.
+    /// Uses base class buildControl method with appropriate parameters.
     /// </summary>
     /// <returns>Container with quantity entry form controls</returns>
     protected container buildAgaStandardItemQtyControls()
@@ -32,40 +33,10 @@ final internal class WhsWorkExecuteDisplayUserDirected_AGA_Extension
             itemId = pass.lookup('AgaCurrentItem');
         }
         
-        // Build quantity entry form for standard items
-        ret = this.buildControl(
-            "@WAX:Quantity",
-            WHSRFControlType::Input,
-            "AgaQty",
-            "",
-            strFmt("@WAX:EnterQtyForItem", itemId),
-            ""
-        );
-        
-        return ret;
-    }
-
-]]></Source>
-			</Method>
-			<Method>
-				<Name>buildControl</Name>
-				<Source><![CDATA[
-    /// <summary>
-    /// Helper method to build a control container.
-    /// </summary>
-    private container buildControl(
-        str _label,
-        WHSRFControlType _controlType,
-        str _name,
-        str _data,
-        str _message,
-        str _placeholder)
-    {
-        container ret;
-        
-        // Build control container - simplified version
-        // In real implementation, this would use proper control building logic
-        ret = [_label, _controlType, _name, _message, _placeholder, _data];
+        // Build quantity entry form for standard items using base class method
+        str message = strFmt("@WAX:EnterQtyForItem", itemId);
+        ret = [this.buildControl(#RFText, "AgaQtyLabel", "@WAX:Quantity", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaQty", message, 1, '', #WHSRFUndefinedDataType, '', 0)];
         
         return ret;
     }

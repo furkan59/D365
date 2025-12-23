@@ -140,9 +140,18 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
     /// </summary>
     /// <param name="_serialNumber">The serial number to check</param>
     /// <returns>True if serial number exists, false otherwise</returns>
+    /// <remarks>
+    /// TODO: Implement proper serial number validation by querying InventSerial table.
+    /// Current implementation returns false as a placeholder for demonstration purposes.
+    /// In production, this should check:
+    /// - Whether serial number exists in InventSerial table
+    /// - Whether serial number is already assigned to current work
+    /// - Whether serial number matches item requirements
+    /// </remarks>
     private boolean AgaSerialNumberExists(str _serialNumber)
     {
-        // Simplified check - in real implementation would query InventSerial table
+        // Placeholder implementation - always returns false
+        // Production code should query: select firstonly InventSerial where InventSerial.InventSerialId == _serialNumber
         return false;
     }
 
@@ -153,21 +162,17 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
 				<Source><![CDATA[
     /// <summary>
     /// Builds the form controls for serial number input.
+    /// Uses base class buildControl method with appropriate parameters.
     /// </summary>
     /// <returns>Container with serial input form controls</returns>
     private container buildAgaSerialInputControls()
     {
         container ret;
         
-        // Build serial input form
-        ret = this.buildControl(
-            "@WAX:SerialNumber",
-            WHSRFControlType::Input,
-            "AgaSerial",
-            "",
-            "",
-            "@WAX:EnterSerialNumber"
-        );
+        // Build serial input form using base class method
+        // Parameters: controlType, name, label, newLine, data, dataType, extendedType, defaultButton, enabled, selected, colorText, extTypeNum
+        ret = [this.buildControl(#RFText, "AgaSerialLabel", "@WAX:SerialNumber", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaSerial", "@WAX:EnterSerialNumber", 1, '', #WHSRFUndefinedDataType, '', 0)];
         
         return ret;
     }
@@ -179,21 +184,16 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
 				<Source><![CDATA[
     /// <summary>
     /// Builds the form controls for box selection.
+    /// Uses base class buildControl method with appropriate parameters.
     /// </summary>
     /// <returns>Container with box selection form controls</returns>
     private container buildBoxSelectionControls()
     {
         container ret;
         
-        // Build box selection form - simplified version
-        ret = this.buildControl(
-            "@WAX:SelectBox",
-            WHSRFControlType::Input,
-            "AgaBox",
-            "",
-            "",
-            "@WAX:ScanBox"
-        );
+        // Build box selection form using base class method
+        ret = [this.buildControl(#RFText, "AgaBoxLabel", "@WAX:SelectBox", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaBox", "@WAX:ScanBox", 1, '', #WHSRFUndefinedDataType, '', 0)];
         
         return ret;
     }
@@ -205,6 +205,7 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
 				<Source><![CDATA[
     /// <summary>
     /// Builds an error container with the specified message.
+    /// Uses base class buildControl method with appropriate parameters.
     /// </summary>
     /// <param name="_errorMessage">The error message to display</param>
     /// <returns>Container with error message</returns>
@@ -212,14 +213,8 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
     {
         container ret;
         
-        ret = this.buildControl(
-            "@WAX:Error",
-            WHSRFControlType::Text,
-            "Error",
-            _errorMessage,
-            "",
-            ""
-        );
+        // Build error control using base class method
+        ret = [this.buildControl(#RFLabel, "Error", _errorMessage, 1, '', #WHSRFUndefinedDataType, '', 0)];
         
         return ret;
     }
@@ -266,6 +261,7 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
     /// Builds the form controls for quantity entry for batch items only.
     /// This form is now only used for batch items since standard items 
     /// go directly to quantity entry via buildAgaStandardItemQtyControls.
+    /// Uses base class buildControl method with appropriate parameters.
     /// </summary>
     /// <returns>Container with quantity entry form controls</returns>
     protected container buildAgaQtyEntryInputControls()
@@ -279,40 +275,10 @@ final internal class WhsWorkExecuteDisplay_AGA_Extension
             batchNumber = pass.lookup('AgaCurrentBatch');
         }
         
-        // Build quantity entry form for batch items
-        ret = this.buildControl(
-            "@WAX:Quantity",
-            WHSRFControlType::Input,
-            "AgaQty",
-            "",
-            strFmt("@WAX:EnterQtyForBatch", batchNumber),
-            ""
-        );
-        
-        return ret;
-    }
-
-]]></Source>
-			</Method>
-			<Method>
-				<Name>buildControl</Name>
-				<Source><![CDATA[
-    /// <summary>
-    /// Helper method to build a control container.
-    /// </summary>
-    private container buildControl(
-        str _label,
-        WHSRFControlType _controlType,
-        str _name,
-        str _data,
-        str _message,
-        str _placeholder)
-    {
-        container ret;
-        
-        // Build control container - simplified version
-        // In real implementation, this would use proper control building logic
-        ret = [_label, _controlType, _name, _message, _placeholder, _data];
+        // Build quantity entry form for batch items using base class method
+        str message = strFmt("@WAX:EnterQtyForBatch", batchNumber);
+        ret = [this.buildControl(#RFText, "AgaQtyLabel", "@WAX:Quantity", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaQty", message, 1, '', #WHSRFUndefinedDataType, '', 0)];
         
         return ret;
     }
