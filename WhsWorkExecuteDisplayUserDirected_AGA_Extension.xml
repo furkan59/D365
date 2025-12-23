@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WhsWorkExecuteDisplayUserDirected_AGA_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// The <c>WhsWorkExecuteDisplayUserDirected_AGA_Extension</c> class extends WhsWorkExecuteDisplayUserDirected 
+/// with AGA-specific functionality for user-directed picking.
+/// </summary>
+[ExtensionOf(classStr(WhsWorkExecuteDisplayUserDirected))]
+final internal class WhsWorkExecuteDisplayUserDirected_AGA_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>buildAgaStandardItemQtyControls</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Builds the form controls for standard item quantity entry.
+    /// Standard items go directly to quantity entry, bypassing the old step 2 form.
+    /// Uses base class buildControl method with appropriate parameters.
+    /// </summary>
+    /// <returns>Container with quantity entry form controls</returns>
+    protected container buildAgaStandardItemQtyControls()
+    {
+        container ret;
+        str itemId = '';
+        
+        // Get item ID from pass
+        if (pass && pass.exists('AgaCurrentItem'))
+        {
+            itemId = pass.lookup('AgaCurrentItem');
+        }
+        
+        // Build quantity entry form for standard items using base class method
+        str message = strFmt("@WAX:EnterQtyForItem", itemId);
+        ret = [this.buildControl(#RFText, "AgaQtyLabel", "@WAX:Quantity", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaQty", message, 1, '', #WHSRFUndefinedDataType, '', 0)];
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

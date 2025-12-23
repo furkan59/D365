@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>WhsWorkExecuteDisplay_AGA_Extension</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+/// <summary>
+/// The <c>WhsWorkExecuteDisplay_AGA_Extension</c> class extends WhsWorkExecuteDisplay with AGA-specific functionality.
+/// This extension contains shared helper methods that can be used across different contexts.
+/// </summary>
+[ExtensionOf(classStr(WhsWorkExecuteDisplay))]
+final internal class WhsWorkExecuteDisplay_AGA_Extension
+{
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>AgaRemoveKeyIfExists</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Helper method to safely remove a key from pass if it exists.
+    /// </summary>
+    /// <param name="_key">The key to remove from the pass</param>
+    protected void AgaRemoveKeyIfExists(str _key)
+    {
+        if (pass && pass.exists(_key))
+        {
+            pass.remove(_key);
+        }
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>AgaReturnToBoxSelectionAfterComplete</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Returns to box selection after item is complete.
+    /// </summary>
+    /// <returns>Container with form controls for box selection</returns>
+    protected container AgaReturnToBoxSelectionAfterComplete()
+    {
+        container ret;
+        
+        // Clear any pending item-specific data
+        this.AgaRemoveKeyIfExists('AgaCurrentItem');
+        this.AgaRemoveKeyIfExists('AgaCurrentQty');
+        this.AgaRemoveKeyIfExists('AgaPendingSerial');
+        this.AgaRemoveKeyIfExists('AgaPendingBatch');
+        
+        // Return to box selection screen
+        ret = this.buildBoxSelectionControls();
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>AgaGetPendingSerialCountStatic</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Gets the count of pending serial numbers for the current item.
+    /// </summary>
+    /// <returns>Count of pending serial numbers</returns>
+    protected int AgaGetPendingSerialCountStatic()
+    {
+        int count = 0;
+        
+        if (pass && pass.exists('AgaPendingSerialCount'))
+        {
+            count = pass.lookup('AgaPendingSerialCount');
+        }
+        
+        return count;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>AgaHandleSerialInput</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Handles serial number input validation and saving.
+    /// </summary>
+    /// <param name="_serialNumber">The serial number entered by the user</param>
+    /// <returns>Container with next form controls or error message</returns>
+    protected container AgaHandleSerialInput(str _serialNumber)
+    {
+        container ret;
+        
+        // Validate serial number is not empty
+        if (!_serialNumber)
+        {
+            ret = this.buildErrorContainer("@WAX:SerialNumberRequired");
+            return ret;
+        }
+        
+        // Check if serial number already exists in the system
+        if (this.AgaSerialNumberExists(_serialNumber))
+        {
+            ret = this.buildErrorContainer("@WAX:SerialNumberAlreadyExists");
+            return ret;
+        }
+        
+        // Save serial number to pass
+        if (pass)
+        {
+            pass.insert('AgaCurrentSerial', _serialNumber);
+            
+            // Decrement pending serial count
+            int pendingCount = this.AgaGetPendingSerialCountStatic();
+            if (pendingCount > 0)
+            {
+                pendingCount--;
+                pass.insert('AgaPendingSerialCount', pendingCount);
+            }
+            
+            // If no more serials pending, complete item
+            if (pendingCount == 0)
+            {
+                ret = this.AgaReturnToBoxSelectionAfterComplete();
+            }
+            else
+            {
+                // Show serial input form again for next serial
+                ret = this.buildAgaSerialInputControls();
+            }
+        }
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>AgaSerialNumberExists</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Checks if a serial number already exists in the system.
+    /// </summary>
+    /// <param name="_serialNumber">The serial number to check</param>
+    /// <returns>True if serial number exists, false otherwise</returns>
+    /// <remarks>
+    /// TODO: Implement proper serial number validation by querying InventSerial table.
+    /// Current implementation returns false as a placeholder for demonstration purposes.
+    /// In production, this should check:
+    /// - Whether serial number exists in InventSerial table
+    /// - Whether serial number is already assigned to current work
+    /// - Whether serial number matches item requirements
+    /// </remarks>
+    private boolean AgaSerialNumberExists(str _serialNumber)
+    {
+        // Placeholder implementation - always returns false
+        // Production code should query: select firstonly InventSerial where InventSerial.InventSerialId == _serialNumber
+        return false;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildAgaSerialInputControls</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Builds the form controls for serial number input.
+    /// Uses base class buildControl method with appropriate parameters.
+    /// </summary>
+    /// <returns>Container with serial input form controls</returns>
+    private container buildAgaSerialInputControls()
+    {
+        container ret;
+        
+        // Build serial input form using base class method
+        // Parameters: controlType, name, label, newLine, data, dataType, extendedType, defaultButton, enabled, selected, colorText, extTypeNum
+        ret = [this.buildControl(#RFText, "AgaSerialLabel", "@WAX:SerialNumber", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaSerial", "@WAX:EnterSerialNumber", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildBoxSelectionControls</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Builds the form controls for box selection.
+    /// Uses base class buildControl method with appropriate parameters.
+    /// </summary>
+    /// <returns>Container with box selection form controls</returns>
+    private container buildBoxSelectionControls()
+    {
+        container ret;
+        
+        // Build box selection form using base class method
+        ret = [this.buildControl(#RFText, "AgaBoxLabel", "@WAX:SelectBox", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaBox", "@WAX:ScanBox", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildErrorContainer</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Builds an error container with the specified message.
+    /// Uses base class buildControl method with appropriate parameters.
+    /// </summary>
+    /// <param name="_errorMessage">The error message to display</param>
+    /// <returns>Container with error message</returns>
+    private container buildErrorContainer(str _errorMessage)
+    {
+        container ret;
+        
+        // Build error control using base class method
+        ret = [this.buildControl(#RFLabel, "Error", _errorMessage, 1, '', #WHSRFUndefinedDataType, '', 0)];
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>AgaHandleBatchInput</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Handles batch input validation and transition to qty entry.
+    /// </summary>
+    /// <param name="_batchNumber">The batch number entered by the user</param>
+    /// <returns>Container with next form controls or error message</returns>
+    protected container AgaHandleBatchInput(str _batchNumber)
+    {
+        container ret;
+        
+        // Validate batch number is not empty
+        if (!_batchNumber)
+        {
+            ret = this.buildErrorContainer("@WAX:BatchNumberRequired");
+            return ret;
+        }
+        
+        // Save batch number to pass
+        if (pass)
+        {
+            pass.insert('AgaCurrentBatch', _batchNumber);
+            
+            // Transition to quantity entry for batch items
+            ret = this.buildAgaQtyEntryInputControls();
+        }
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>buildAgaQtyEntryInputControls</Name>
+				<Source><![CDATA[
+    /// <summary>
+    /// Builds the form controls for quantity entry for batch items only.
+    /// This form is now only used for batch items since standard items 
+    /// go directly to quantity entry via buildAgaStandardItemQtyControls.
+    /// Uses base class buildControl method with appropriate parameters.
+    /// </summary>
+    /// <returns>Container with quantity entry form controls</returns>
+    protected container buildAgaQtyEntryInputControls()
+    {
+        container ret;
+        str batchNumber = '';
+        
+        // Get batch number from pass
+        if (pass && pass.exists('AgaCurrentBatch'))
+        {
+            batchNumber = pass.lookup('AgaCurrentBatch');
+        }
+        
+        // Build quantity entry form for batch items using base class method
+        str message = strFmt("@WAX:EnterQtyForBatch", batchNumber);
+        ret = [this.buildControl(#RFText, "AgaQtyLabel", "@WAX:Quantity", 1, '', #WHSRFUndefinedDataType, '', 0)];
+        ret += [this.buildControl(#RFInput, "AgaQty", message, 1, '', #WHSRFUndefinedDataType, '', 0)];
+        
+        return ret;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
